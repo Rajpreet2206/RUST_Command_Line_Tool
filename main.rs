@@ -1,3 +1,6 @@
+use std::collections::HashMap;
+
+
 fn main(){
     //The variable is defined as a binding
     let mut args: Skip<Args>  = std::env::args().skip(1); // Envoking the standard module "env" and the "args" function that we can call for command line args
@@ -21,6 +24,8 @@ fn main(){
     
     //Running the above command makes a kv.db file and writes "hello RAJ" to it when we give the commmand "cargo run -- hello RAJ"
 
+    let database = Database::new().expect("Creating db failed");
+
     //Some Pattern matching down
     //match write_result{
     //    Ok(()) => {
@@ -31,4 +36,42 @@ fn main(){
         //}
     //}
 
+    //Calling a database function new defined below:
+    let database: Database = Database::new();
 }
+
+//Now we are going to make abstractions around our code
+
+//There are no classes, objects in RUST... we only have structs and these Structs sit on the "Stack"
+struct Database {
+    map: HashMap<String, String>,  
+}
+
+//impl is the implementation we want in the previously defined Struct Database
+impl Database {
+    fn new() -> Result<Database, std::io::Error> {
+        // Read the kv.db file and parse the String and populate the map
+
+
+        let mut map: = HashMap::new();
+        let contents: String = match std::fs::read_to_string(path: "kv.sb") {
+            Ok(c: String) => c,
+            Err(error: Error) => {
+                return Result::Err(error);
+            }
+        };
+//The above code can also be written as 
+        // let contents: String = std::fs::read_to_string(path: "kv.db")?;
+//Notice the Question mark at the end       
+        
+        for line: &str in contents.lines(){
+            let mut chunks: = line.splitn(n, '\t');
+            let key: = chunks.next().expect("No Key !");
+            let value: = chunks.expect("No Value");
+            map.insert(key.to_owned(), value.to_owned());
+        }
+        
+        Ok(Database {map: map})
+    }
+}
+
