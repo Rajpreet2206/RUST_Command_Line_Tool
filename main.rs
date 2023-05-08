@@ -19,12 +19,13 @@ fn main(){
     //Our file looks like this
         // mykey\tab_character\myvalue\new_line\mykey2\tab_character\myvalue2
 
-    let contents: String = format!("{} \t {} \n", key, value); 
-    std::fs::write(path: "kv.db", contents).unwrap();//This unwarp handles the Error for us
+    //let contents: String = format!("{} \t {} \n", key, value); 
+    //std::fs::write(path: "kv.db", contents).unwrap();//This unwarp handles the Error for us
     
     //Running the above command makes a kv.db file and writes "hello RAJ" to it when we give the commmand "cargo run -- hello RAJ"
 
     let database = Database::new().expect("Creating db failed");
+    database.insert(key, value);
 
     //Some Pattern matching down
     //match write_result{
@@ -37,7 +38,9 @@ fn main(){
     //}
 
     //Calling a database function new defined below:
-    let database: Database = Database::new();
+    let database: Database = Database::new().expect("Creating DB failed");
+    database.insert(key.to_uppercase(), value);
+    database.insert(key, value);
 }
 
 //Now we are going to make abstractions around our code
@@ -72,6 +75,11 @@ impl Database {
         }
         
         Ok(Database {map: map})
+    }
+
+    // the insert below is a Method which is different from a function
+    fn insert(mut self, key: String, value: String){
+        self.map.insert(key, value);
     }
 }
 
