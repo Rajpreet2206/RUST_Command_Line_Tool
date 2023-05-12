@@ -24,7 +24,8 @@ fn main(){
     
     //Running the above command makes a kv.db file and writes "hello RAJ" to it when we give the commmand "cargo run -- hello RAJ"
 
-    let database = Database::new().expect("Creating db failed");
+    let mut database = Database::new().expect("Creating db failed");
+    database.insert(key.to_uppercase(), value.clone());
     database.insert(key, value);
 
     //Some Pattern matching down
@@ -78,7 +79,7 @@ impl Database {
     }
 
     // the insert below is a Method which is different from a function
-    fn insert(mut self, key: String, value: String){
+    fn insert(&mut self, key: String, value: String){
         self.map.insert(key, value);
     }
 }
